@@ -173,11 +173,11 @@ TLD_background.interceptNetworkRequests = function(requestDetails) {
           if (tab.id !== requestDetails.tabId) {
             return;
           }
-          //console.log(requestDetails.url);    // for debugging
+          console.log(requestDetails.url);    // for debugging
           let cleanUrl = requestDetails.url.replace(/\/?\?.*/, "");    // remove the last "/" and the query strings from the request URL
           //console.log(cleanUrl);    // for debugging
           if (TLD_background.pathRegex.test(cleanUrl)) {
-            //console.log(requestDetails);    // for debugging
+            console.log(requestDetails);    // for debugging
             let filter = browser.webRequest.filterResponseData(requestDetails.requestId);
             let decoder = new TextDecoder("utf-8");
             let encoder = new TextEncoder();
@@ -455,6 +455,11 @@ TLD_background.messageContentScript = function(tabID) {
 };
 
 
+TLD_background.asyncInterceptNetworkRequests = async function(requestDetails) {
+  await TLD_background.interceptNetworkRequests(requestDetails);
+};
+
+
 
 /**
  * Initialize the add-on
@@ -490,7 +495,7 @@ browser.browserAction.onClicked.addListener(TLD_background.toggleStatus);    // 
 browser.runtime.onMessage.addListener(TLD_background.handleMessage);    // listen for messages from the background script
 
 browser.webRequest.onBeforeRequest.addListener(
-  TLD_background.interceptNetworkRequests,
+  TLD_background.asyncInterceptNetworkRequests,
   {urls: ["*://*.twitter.com/*"]},
   ["blocking"]
 );    // intercept the network responses from twitter.com
