@@ -162,7 +162,7 @@ TLD_background.onMessageError = function(error) {
  * @memberof TLD_background
  * @param {object} requestDetails - An object passed over by the event listener
  */
-TLD_background.interceptNetworkRequests = function(requestDetails) {
+TLD_background.interceptNetworkRequests = async function(requestDetails) {
   //console.log(`Loading: " ${requestDetails.url}`);    // for debugging
   browser.storage.local.get().then((storedSettings) => {
     if (storedSettings.enabled === true) {
@@ -455,11 +455,6 @@ TLD_background.messageContentScript = function(tabID) {
 };
 
 
-TLD_background.asyncInterceptNetworkRequests = async function(requestDetails) {
-  TLD_background.interceptNetworkRequests(requestDetails);
-};
-
-
 
 /**
  * Initialize the add-on
@@ -495,7 +490,7 @@ browser.browserAction.onClicked.addListener(TLD_background.toggleStatus);    // 
 browser.runtime.onMessage.addListener(TLD_background.handleMessage);    // listen for messages from the background script
 
 browser.webRequest.onBeforeRequest.addListener(
-  TLD_background.asyncInterceptNetworkRequests,
+  TLD_background.interceptNetworkRequests,
   {urls: ["*://*.twitter.com/*"]},
   ["blocking"]
 );    // intercept the network responses from twitter.com
