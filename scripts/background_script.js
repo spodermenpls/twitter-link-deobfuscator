@@ -456,7 +456,7 @@ TLD_background.messageContentScript = function(tabID) {
 
 
 TLD_background.asyncInterceptNetworkRequests = async function(requestDetails) {
-  await TLD_background.interceptNetworkRequests(requestDetails);
+  TLD_background.interceptNetworkRequests(requestDetails);
 };
 
 
